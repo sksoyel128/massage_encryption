@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Network Messaging Simulation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script type="text/javascript" src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <link href="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        #network {
+            width: 100%;
+            height: 400px;
+            border: 1px solid lightgray;
+            margin-bottom: 20px;
+        }
+
+        /* You can keep your existing styles here */
+    </style>
+</head>
+
+<body>
+    <h2>Network Messaging Simulation</h2>
+
+    <div id="network"></div>
+
+    <form method="POST" action="{{ url_for('send') }}">
+        <label for="source">Source Node:</label>
+        <select name="source" id="source">
+            {% for node in nodes %}
+            <option value="{{ node }}" {% if src==node %}selected{% endif %}>Node {{ node }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="destination">Destination Node:</label>
+        <select name="destination" id="destination">
+            {% for node in nodes %}
+            <option value="{{ node }}" {% if dst==node %}selected{% endif %}>Node {{ node }}</option>
+            {% endfor %}
+        </select>
+
+        <br /><br />
+        <label for="message">Message:</label><br />
+        <textarea name="message" id="message" rows="4" cols="50">{{ message or '' }}</textarea><br /><br />
+
+        <button type="submit">Send Message</button>
+    </form>
+
+    {% if logs %}
+    <h3>Logs:</h3>
+    
+<pre style="background: none; padding: 0;">{{ logs | join('\n') }}</pre>
+
+    {% endif %}
+
+    {% if decrypted %}
+    <h3>Decrypted Message at Destination:</h3>
+    <p><strong>{{ decrypted }}</strong></p>
+    {% endif %}
+
+    {% if path %}
+    <h3>Used Path:</h3>
+    <p>{{ path }}</p>
+    {% endif %}
+
+   <script>
+    async function fetchNetworkData() {
+        const resp = await fetch('/network-data');
+        if (!resp.ok) return null;
+        return resp.json();
+    }
+
+    function drawNetwork(nodesData, edgesData, path = []) {
+        const container = document.getElementById('network');
+
+        const nodes = new vis.DataSet(nodesData.map(n => ({
+            id: n.id,
+            label: `Node ${n.id}`,
+            color: path.includes(n.id) ? 'orange' : undefined
+        })));
+
+        const edges = new vis.DataSet(edgesData.map(e => ({
+            from: e.from,
+            to: e.to,
+            label: e.cost.toString(),
+            color: path.some((node, i) =>
+                (path[i] === e.from && path[i + 1] === e.to) ||
+                (path[i] === e.to && path[i + 1] === e.from)) ? 'red' : undefined,
+            arrows: 'to'
+        })));
+
+        const data = { nodes, edges };
+        const options = {
+            edges: { font: { align: 'middle' }, smooth: { type: 'cubicBezier' } },
+            physics: { enabled: true }
+        };
+
+        new vis.Network(container, data, options);
+    }
+
+    (async () => {
+        const graph = await fetchNetworkData();
+        if (!graph) return;
+
+        const path = {{ path | tojson | safe }};
+    drawNetwork(graph.nodes, graph.edges, path);
+    }) ();
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+2025-08-30T10:48:31.485207  Top 2 shortest paths from Node 8 to Node 7:
+2025-08-30T10:48:31.485207    Path 1: [8, 7] with cost 8
+2025-08-30T10:48:31.485207    Path 2: [8, 9, 0, 1, 2, 3, 4, 5, 6, 7] with cost 39
+2025-08-30T10:48:31.485207  Session key (hex) for 8->7: 6f0ed5d39c5670d7a829e480122302ce3007cb57cd7e0e175b1614163743fc3b
+2025-08-30T10:48:31.485207  Encrypted at Node 8: ciphertext(hex)=714fc17191dfae50103c24326e1d4a12 iv(hex)=39c20844f33005db5bf30d6bcd6974de
+2025-08-30T10:48:31.485207  Forwarded from Node 8 → Node 7 (cost=8)
+2025-08-30T10:48:31.485207  Decrypted at Node 7: hi
