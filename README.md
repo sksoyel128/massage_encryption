@@ -10,3 +10,10 @@ This project demonstrates a **secure message transmission system** between multi
 - 🌐 Flask-based backend (can be extended with UI)  
 
 ## 📂 Project Structure
+project/
+│
+├── app.py # Main program (Flask server / CLI entry)
+├── encryption/ # Encryption modules (AES, RSA, DES)
+├── network/ # Network graph, adjacency matrix, routing logic
+├── data/ # Stores keys and logs
+└── README.md # Project documentation
